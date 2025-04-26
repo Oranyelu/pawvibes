@@ -1,5 +1,13 @@
-import { toast } from 'react-toastify'; // Make sure this import is at the top
-import { createContext, useReducer, useContext, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useReducer,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { toast } from "react-toastify"; // Ensure this import is correct
+import "react-toastify/dist/ReactToastify.css";
 
 type Product = {
   id: string;
@@ -16,9 +24,9 @@ type CartState = {
 };
 
 type CartAction =
-  | { type: 'ADD_TO_CART'; payload: Product }
-  | { type: 'REMOVE_FROM_CART'; payload: string }
-  | { type: 'CLEAR_CART' };
+  | { type: "ADD_TO_CART"; payload: Product }
+  | { type: "REMOVE_FROM_CART"; payload: string }
+  | { type: "CLEAR_CART" };
 
 const initialState: CartState = {
   cart: [],
@@ -26,7 +34,7 @@ const initialState: CartState = {
 
 function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
-    case 'ADD_TO_CART':
+    case "ADD_TO_CART":
       const exists = state.cart.find((item) => item.id === action.payload.id);
       if (exists) {
         return {
@@ -44,13 +52,13 @@ function reducer(state: CartState, action: CartAction): CartState {
         };
       }
 
-    case 'REMOVE_FROM_CART':
+    case "REMOVE_FROM_CART":
       return {
         ...state,
         cart: state.cart.filter((item) => item.id !== action.payload),
       };
 
-    case 'CLEAR_CART':
+    case "CLEAR_CART":
       return initialState;
 
     default:
@@ -64,12 +72,14 @@ const CartContext = createContext<{
   isDrawerOpen: boolean;
   toggleDrawer: () => void;
   closeDrawer: () => void;
-}>( {
+  handleAddToCart: (product: Product) => void;
+}>({
   state: initialState,
   dispatch: () => null,
   isDrawerOpen: false,
   toggleDrawer: () => {},
-  closeDrawer: () => {}
+  closeDrawer: () => {},
+  handleAddToCart: () => {}, // Initial value for the method
 });
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -81,11 +91,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // ADD TO CART FUNCTION
   const handleAddToCart = (product: Product) => {
-    dispatch({ type: 'ADD_TO_CART', payload: product });
+    dispatch({ type: "ADD_TO_CART", payload: product });
     toast.success(`${product.name} added to cart!`, {
-      position: toast.POSITION.TOP_RIGHT, // Correct position usage
-    });
+      position: "top-right",
+    });    
   };
+
+  // Persist cart to local storage
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      dispatch({ type: "CLEAR_CART" });
+      const parsedCart = JSON.parse(savedCart);
+      parsedCart.forEach((item: CartItem) => {
+        dispatch({ type: "ADD_TO_CART", payload: item });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (state.cart.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(state.cart));
+    }
+  }, [state.cart]);
 
   return (
     <CartContext.Provider
@@ -95,7 +123,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isDrawerOpen,
         toggleDrawer,
         closeDrawer,
-        handleAddToCart, // Make sure the handleAddToCart function is passed down here
+        handleAddToCart, // Pass down the function here
       }}
     >
       {children}

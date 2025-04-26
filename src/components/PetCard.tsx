@@ -1,5 +1,6 @@
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom"; // Import Link to navigate to the product page
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
 type Product = {
   id: string;
@@ -10,11 +11,18 @@ type Product = {
 };
 
 export default function PetCard({ product }: { product: Product }) {
-  const { dispatch } = useCart();
+  const { handleAddToCart } = useCart(); // use the function with toast
+  const [added, setAdded] = useState(false);
+
+  const handleClick = () => {
+    handleAddToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000); // 2 seconds delay
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-all">
-      <Link to={`/product/${product.id}`}>  {/* Wrap the entire card with Link */}
+      <Link to={`/product/${product.id}`}>
         <img
           src={product.image}
           alt={product.name}
@@ -24,10 +32,15 @@ export default function PetCard({ product }: { product: Product }) {
         <p className="text-gray-600 mb-2">₦{product.price.toLocaleString()}</p>
       </Link>
       <button
-        onClick={() => dispatch({ type: "ADD_TO_CART", payload: product })}
-        className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded mt-auto"
+        onClick={handleClick}
+        disabled={added}
+        className={`w-full py-2 rounded mt-auto transition-all duration-200 ${
+          added
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-green-600 hover:bg-green-700 text-white"
+        }`}
       >
-        Add to Cart
+        {added ? "Added to Cart ✅" : "Add to Cart"}
       </button>
     </div>
   );
