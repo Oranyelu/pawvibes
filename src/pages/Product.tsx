@@ -1,74 +1,78 @@
 import { useParams } from "react-router-dom";
 import dummyData from "../data/dummyData.json"; // Ensure correct path
+import PetCard from "../components/PetCard"; // Import your existing PetCard component
+import { useCart } from "../context/CartContext";
+import { useState } from "react";
+
 
 const Product = () => {
   const { id } = useParams(); // Extract the product ID from the URL
   const product = dummyData.find((item) => item.id === id); // Find the product by ID
+  const { handleAddToCart } = useCart(); // use the function with toast
+  const [added, setAdded] = useState(false);
+
+  const handleClick = () => {
+    handleAddToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000); // 2 seconds delay
+  };
 
   if (!product) {
     return <p>Product not found.</p>; // Handle the case where no product is found
   }
 
-  const handleAddToCart = () => {
-    // Logic to add the product to the cart
-    console.log(`${product.name} added to cart!`);
-  };
-
   return (
     <section className="product-page">
-      <h2>{product.name}</h2>
-      <img src={product.image} alt={product.name} className="product-image" />
-      <p>{product.description}</p>
-      <p>₦{product.price.toLocaleString()}</p>
-      <button onClick={handleAddToCart}>Add to Cart</button>
-
+      <div className="min-h-[50vh] product-display">
+        <h2>{product.name}</h2>
+        <img src={product.image} alt={product.name} className="min-h-[300px]" />
+        <p>{product.description}</p>
+        <p>₦{product.price.toLocaleString()}</p>
+        <button
+        onClick={handleClick}
+        disabled={added}
+        className={`w-full py-2 rounded mt-auto transition-all duration-200 ${
+          added
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-green-600 hover:bg-green-700 text-white"
+        }`}
+      >
+        {added ? "Added to Cart ✅" : "Add to Cart"}
+      </button>
+      </div>
       {/* Similar Products Section */}
-      <div className="similar-products">
-        <h3>Similar Products</h3>
-        <div className="product-list">
+      <div className="pt-9">
+        <h3 className="font-bold text-3xl">Similar Products</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
           {dummyData
-            .filter((item) => item.category === product.category && item.id !== product.id)
+            .filter(
+              (item) =>
+                item.category === product.category && item.id !== product.id
+            )
             .map((similarProduct) => (
-              <div key={similarProduct.id} className="product-card">
-                <img src={similarProduct.image} alt={similarProduct.name} />
-                <h4>{similarProduct.name}</h4>
-                <p>₦{similarProduct.price.toLocaleString()}</p>
-              </div>
+              <PetCard key={similarProduct.id} product={similarProduct} />
             ))}
         </div>
       </div>
 
       {/* More You Might Like Section */}
-      <div className="more-you-might-like">
-        <h3>More You Might Like</h3>
-        <div className="product-list">
+      <div className="pt-9">
+        <h3 className="font-bold text-3xl">More You Might Like</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
           {dummyData
             .filter((item) => item.id !== product.id)
             .map((suggestedProduct) => (
-              <div key={suggestedProduct.id} className="product-card">
-                <img src={suggestedProduct.image} alt={suggestedProduct.name} />
-                <h4>{suggestedProduct.name}</h4>
-                <p>₦{suggestedProduct.price.toLocaleString()}</p>
-              </div>
+              <PetCard key={suggestedProduct.id} product={suggestedProduct} />
             ))}
         </div>
       </div>
 
       {/* Frequently Bought Together Section */}
-      <div className="frequently-bought-together">
-        <h3>Frequently Bought Together</h3>
-        <div className="product-list">
-          {/* Example of suggesting a combination */}
-          <div className="product-card">
-            <img src={dummyData[2].image} alt={dummyData[2].name} />
-            <h4>{dummyData[2].name}</h4>
-            <p>₦{dummyData[2].price.toLocaleString()}</p>
-          </div>
-          <div className="product-card">
-            <img src={dummyData[3].image} alt={dummyData[3].name} />
-            <h4>{dummyData[3].name}</h4>
-            <p>₦{dummyData[3].price.toLocaleString()}</p>
-          </div>
+      <div className="pt-9">
+        <h3 className="font-bold text-3xl">Frequently Bought Together</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
+          <PetCard key={dummyData[2].id} product={dummyData[2]} />
+          <PetCard key={dummyData[3].id} product={dummyData[3]} />
         </div>
       </div>
     </section>
