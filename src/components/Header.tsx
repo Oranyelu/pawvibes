@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ShoppingCart } from "lucide-react";
+import PawVibeLogo from "../assets/PawVibeHeaderLogo.svg"
 
 const Header = () => {
   const { toggleDrawer, state } = useCart();
@@ -11,8 +12,8 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-pink-600">
-        PawVibe
+      <Link to="/" className="">
+        <img src={PawVibeLogo} alt="PawVibe Header Logo" className="w-[100px]" />
       </Link>
 
       <nav className="space-x-4 flex items-center">
