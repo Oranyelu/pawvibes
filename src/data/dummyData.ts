@@ -12,6 +12,7 @@ const products = [
     price: 120000,
     image: goldenRetriever,
     category: "pet",
+    description: "Friendly and playful dog perfect for families.",
   },
   {
     id: "pet-002",
@@ -19,6 +20,7 @@ const products = [
     price: 95000,
     image: persianCat,
     category: "pet",
+    description: "Friendly and playful dog perfect for families.",
   },
   {
     id: "food-001",
@@ -26,6 +28,7 @@ const products = [
     price: 8500,
     image: dogFood,
     category: "food",
+    description: "Friendly and playful dog perfect for families.",
   },
   {
     id: "food-002",
@@ -33,6 +36,7 @@ const products = [
     price: 6500,
     image: catTreats,
     category: "food",
+    description: "Friendly and playful dog perfect for families.",
   },
   {
     id: "accessory-001",
@@ -40,6 +44,7 @@ const products = [
     price: 3000,
     image: dogCollar,
     category: "accessory",
+    description: "Friendly and playful dog perfect for families.",
   },
   {
     id: "accessory-002",
@@ -47,6 +52,7 @@ const products = [
     price: 9500,
     image: catPost,
     category: "accessory",
+    description: "Friendly and playful dog perfect for families.",
   }
 ];
 

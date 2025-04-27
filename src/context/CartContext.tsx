@@ -6,7 +6,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { toast } from "react-toastify"; // Ensure this import is correct
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 type Product = {
@@ -26,7 +26,8 @@ type CartState = {
 type CartAction =
   | { type: "ADD_TO_CART"; payload: Product }
   | { type: "REMOVE_FROM_CART"; payload: string }
-  | { type: "CLEAR_CART" };
+  | { type: "CLEAR_CART" }
+  | { type: "SET_CART"; payload: CartItem[] };
 
 const initialState: CartState = {
   cart: [],
@@ -61,6 +62,12 @@ function reducer(state: CartState, action: CartAction): CartState {
     case "CLEAR_CART":
       return initialState;
 
+    case "SET_CART":
+      return {
+        ...state,
+        cart: action.payload,
+      };
+
     default:
       return state;
   }
@@ -79,7 +86,7 @@ const CartContext = createContext<{
   isDrawerOpen: false,
   toggleDrawer: () => {},
   closeDrawer: () => {},
-  handleAddToCart: () => {}, // Initial value for the method
+  handleAddToCart: () => {},
 });
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -89,29 +96,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const toggleDrawer = () => setIsDrawerOpen((prev) => !prev);
   const closeDrawer = () => setIsDrawerOpen(false);
 
-  // ADD TO CART FUNCTION
   const handleAddToCart = (product: Product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
     toast.success(`${product.name} added to cart!`, {
       position: "top-right",
-    });    
+    });
   };
 
-  // Persist cart to local storage
+  // Load cart from localStorage
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      dispatch({ type: "CLEAR_CART" });
-      const parsedCart = JSON.parse(savedCart);
-      parsedCart.forEach((item: CartItem) => {
-        dispatch({ type: "ADD_TO_CART", payload: item });
-      });
+    try {
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+        if (Array.isArray(parsedCart)) {
+          dispatch({ type: "SET_CART", payload: parsedCart });
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load cart from localStorage", err);
     }
   }, []);
 
+  // Save cart to localStorage on change
   useEffect(() => {
     if (state.cart.length > 0) {
       localStorage.setItem("cart", JSON.stringify(state.cart));
+    } else {
+      localStorage.removeItem("cart"); // Optional: clean up when cart is empty
     }
   }, [state.cart]);
 
@@ -123,7 +135,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isDrawerOpen,
         toggleDrawer,
         closeDrawer,
-        handleAddToCart, // Pass down the function here
+        handleAddToCart,
       }}
     >
       {children}
