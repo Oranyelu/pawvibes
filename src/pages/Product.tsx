@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import dummyData from "../data/dummyData.json"; // Ensure correct path
+import dummyData from "../data/dummyData"; // Ensure correct path
 import PetCard from "../components/PetCard"; // Import your existing PetCard component
 import { useCart } from "../context/CartContext";
 import { useState } from "react";

@@ -1,15 +1,16 @@
 import { useState } from "react";
 import SearchFilterBar from "../components/SearchFilterBar";
 import PetCard from "../components/PetCard";
-import data from "../data/dummyData.json";
+import data from "../data/dummyData";
 
 export default function Shop() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("");
 
-  const filtered = data.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (filter ? item.category === filter : true)
+  const filtered = data.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filter ? item.category === filter : true)
   );
 
   return (
@@ -36,10 +37,14 @@ export default function Shop() {
       </div>
 
       {/* 🍖 FOOD + 🧸 ACCESSORIES */}
-      <h2 className="text-2xl font-bold mb-4">More You Might Be Interested In</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        More You Might Be Interested In
+      </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered
-          .filter((item) => item.category === "food" || item.category === "accessory")
+          .filter(
+            (item) => item.category === "food" || item.category === "accessory"
+          )
           .map((item) => (
             <PetCard key={item.id} product={item} />
           ))}
