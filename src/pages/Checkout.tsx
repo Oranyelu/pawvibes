@@ -1,20 +1,25 @@
 // pages/Checkout.tsx
-import { useCart } from "../context/CartContext"; // Import useCart hook to access cart data
-import { Link } from "react-router-dom"; // Import Link for routing to go back to shop
+import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify"; 
 
 const Checkout = () => {
-  const { state, dispatch } = useCart(); // Now, you get both state and dispatch
+  const { state, dispatch } = useCart();
+
   const getTotalPrice = () => {
     return state.cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const handlePlaceOrder = () => {
-    // Simulate placing the order (this is where you could handle backend API calls)
-    alert("Order placed successfully!");
+ 
 
-    // Clear the cart
-    dispatch({ type: "CLEAR_CART" }); // Use dispatch to clear the cart
+  const handlePlaceOrder = () => {
+    toast.success("Order placed successfully!", {
+      position: "top-center",
+    });
+  
+    dispatch({ type: "CLEAR_CART" });
   };
+  
 
   return (
     <section className="p-4">
@@ -29,9 +34,12 @@ const Checkout = () => {
               <li key={item.id} className="flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={item.image}
+                    src={item.image || "/placeholder.jpg"}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
+                    onError={(e) =>
+                      ((e.target as HTMLImageElement).src = "/placeholder.jpg")
+                    }
                   />
                   <div>
                     <h3 className="font-semibold">{item.name}</h3>

@@ -59,8 +59,10 @@ function reducer(state: CartState, action: CartAction): CartState {
         cart: state.cart.filter((item) => item.id !== action.payload),
       };
 
-    case "CLEAR_CART":
-      return initialState;
+      case "CLEAR_CART":
+        localStorage.removeItem("cart"); // Clears saved cart immediately
+        return initialState;
+      
 
     case "SET_CART":
       return {

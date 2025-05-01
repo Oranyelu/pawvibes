@@ -1,12 +1,12 @@
 // pages/Cart.tsx
-import { useCart } from "../context/CartContext"; // Import the useCart hook to access cart data
-import { Link } from "react-router-dom"; // Import Link for routing to checkout
+import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
-  const { state, dispatch } = useCart(); // Access cart state and dispatch from CartContext
+  const { state, dispatch } = useCart();
 
   const handleRemove = (id: string) => {
-    dispatch({ type: "REMOVE_FROM_CART", payload: id }); // Remove item from cart
+    dispatch({ type: "REMOVE_FROM_CART", payload: id });
   };
 
   const getTotalPrice = () => {
@@ -28,6 +28,10 @@ const Cart = () => {
                     src={item.image}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
+                    onError={(e) => {
+                      // Fallback for broken or missing image links
+                      (e.target as HTMLImageElement).src = "/placeholder.jpg";
+                    }}
                   />
                   <div>
                     <h3 className="font-semibold">{item.name}</h3>
