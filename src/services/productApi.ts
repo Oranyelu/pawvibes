@@ -18,7 +18,8 @@ export interface Product {
 
 // productApi.ts
 export const getAllProducts = async (): Promise<Product[]> => {
-    const res = await axios.get(BASE_URL);
+    const res = await axios.get<Product[]>(BASE_URL);
+
     return res.data.map((item: any) => ({
       id: item._id, // convert _id to id for frontend
       name: item.name,

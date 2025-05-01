@@ -36,8 +36,15 @@ export default function AddPet() {
 
     const formData = new FormData();
     Object.entries(product).forEach(([key, value]) => {
-      if (value) formData.append(key, value);
+      if (value !== null && value !== undefined) {
+        if (key === "image" && value instanceof File) {
+          formData.append(key, value); // file handling
+        } else {
+          formData.append(key, String(value)); // string + number
+        }
+      }
     });
+    
 
     try {
       await axios.post("http://localhost:5000/api/products", formData, {
